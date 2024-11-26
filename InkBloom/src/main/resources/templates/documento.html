@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InkBloom</title>
+    <style>
+        /* Estilos básicos */
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f3f4f6;
+          margin: 0;
+          padding: 0;
+        }
+        header {
+          background-color: #ffffff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 16px;
+        }
+        .flex {
+          display: flex;
+          align-items: center;
+        }
+        .space-between {
+          justify-content: space-between;
+        }
+        .space-x-4 > *:not(:last-child) {
+          margin-right: 16px;
+        }
+        .button {
+          display: inline-flex;
+          align-items: center;
+          padding: 8px 12px;
+          background-color: #3b82f6;
+          color: #ffffff;
+          border-radius: 4px;
+          cursor: pointer;
+          text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container flex space-between">
+        <h1>InkBloom</h1>
+    </div>
+</header>
+
+<div class="container">
+    <h2>Documentos</h2>
+
+    <h3>Documentos Actuales:</h3>
+    <ul>
+        <li th:each="doc : ${documentos}">
+            <a th:href="@{'/documento/crear?titulo=' + ${doc.titulo}}" th:text="${doc.titulo}"></a>
+        </li>
+    </ul>
+
+    <h3>Documento Actual:</h3>
+    <p>Title: <span th:text="${documento.titulo}"></span></p>
+    <p>Fecha de Edición: <span th:text="${documento.fechaEdicion}"></span></p>
+    <p>Cuerpo: <span th:text="${documento.cuerpo}"></span></p>
+
+    <!-- Formulario de texto -->
+    <form action="/documento/agregar" method="post">
+        <input type="text" name="texto" placeholder="Escribe una línea" required>
+        <button type="submit">Agregar Línea</button>
+    </form>
+
+    <form action="/documento/quitar" method="post">
+        <button type="submit">Quitar Línea</button>
+    </form>
+
+    <form action="/documento/deshacer" method="post">
+        <button type="submit">Deshacer</button>
+    </form>
+
+    <form action="/documento/rehacer" method="post">
+        <button type="submit">Rehacer</button>
+    </form>
+</div>
+</body>
+</html>
