@@ -1,0 +1,167 @@
+/* Fondo negro para todo el cuerpo */
+body.fondo-negro {
+    background-color: rgb(58, 55, 55);
+    color: #2E59C6;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+  /* Contenedor principal */
+  .contenedor {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #2E59C6;
+  }
+  
+  /* Título */
+  .titulo {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #e2e2e2;
+  }
+  
+  /* Editor */
+  .editor {
+    background-color: white;
+    color: black;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    min-height: 200px;
+  }
+  
+  
+  /* Botones */
+  .botones {
+    margin-top: 20px;
+  }
+  
+  .boton {
+    background-color: #2E59C6;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    font-size: 1em;
+  }
+  
+  .boton:hover {
+    background-color: #1E3F8C;
+  }
+  
+
+ /* Otros elementos específicos */
+.ql-toolbar {
+    background-color: #00008B; /* Fondo azul fuerte */
+    border: 4px solid #000000; /* Borde blanco */
+}
+
+.ql-toolbar button {
+    background-color: #ffffff; /* Azul más claro */
+    color: #FFFFFF;
+    border: none;
+}
+
+
+
+.ql-toolbar button:hover {
+    background-color: #ffffff;
+}
+
+/* Formato de texto */
+.ql-formats {
+    background-color: #FFFFFF;
+    color: #FFFFFF; /* Texto blanco */
+}
+
+
+.ql-header {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+
+/* Estilos base (ya definidos) */
+
+/* Media Queries */
+
+/* Dispositivos pequeños (teléfonos en orientación vertical, ancho máximo de 600px) */
+@media screen and (max-width: 600px) {
+    .contenedor {
+      padding: 10px;
+      max-width: 100%;
+    }
+  
+    .titulo {
+      font-size: 1.2em; /* Reduce el tamaño del título */
+      margin-bottom: 15px;
+    }
+  
+    .editor {
+      padding: 10px;
+      min-height: 150px; /* Reduce la altura mínima del editor */
+      font-size: 0.9em;
+    }
+  
+    .botones {
+      display: flex;
+      flex-direction: column; /* Los botones estarán uno debajo de otro */
+      gap: 10px; /* Espacio entre botones */
+    }
+  
+    .boton {
+      font-size: 0.9em; /* Reduce el tamaño de la fuente en botones */
+      padding: 8px 10px;
+    }
+  }
+  
+  /* Dispositivos medianos (tabletas y pantallas más pequeñas, ancho máximo de 900px) */
+  @media screen and (max-width: 900px) {
+    .contenedor {
+      padding: 15px;
+      max-width: 90%;
+    }
+  
+    .titulo {
+      font-size: 1.4em;
+      margin-bottom: 18px;
+    }
+  
+    .editor {
+      padding: 12px;
+      min-height: 180px;
+    }
+  
+    .boton {
+      font-size: 1em;
+      padding: 10px 12px;
+    }
+  }
+  
+  /* Dispositivos grandes (pantallas grandes, ancho mínimo de 1200px) */
+  @media screen and (min-width: 1200px) {
+    .contenedor {
+      max-width: 1000px; /* Expande el ancho del contenedor */
+    }
+  
+    .titulo {
+      font-size: 2em; /* Aumenta el tamaño del título */
+    }
+  
+    .editor {
+      min-height: 300px; /* Incrementa la altura mínima del editor */
+      font-size: 1.1em;
+    }
+  
+    .boton {
+      font-size: 1.2em; /* Aumenta el tamaño de los botones */
+      padding: 12px 20px;
+    }
+  }
+  
+
