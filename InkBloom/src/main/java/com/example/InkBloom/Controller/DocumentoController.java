@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Queue;
 
 // Controlador que maneja las rutas para interactuar con el documento
 @Controller
@@ -66,4 +67,53 @@ public class DocumentoController {
         model.addAttribute("documento", documentoService.obtenerDocumento());
         return "documento";
     }
+
+    @PostMapping("/guardar")
+    public String guardarDocumento(Model model) {
+        documentoService.guardarDocumento();
+        model.addAttribute("documentosGuardados", documentoService.listarDocumentos());
+        return "documento";
+    }
+
+    @GetMapping("/cambios")
+    public String listarCambiosPendientes(Model model) {
+        Queue<String> cambios = documentoService.listarCambiosPendientes();
+        model.addAttribute("cambios", cambios);
+        return "cambiosPendientes"; // Vista con la lista de cambios
+    }
+
+    @PostMapping("/vista/abrir")
+    public String abrirDocumentoEnVista(@RequestParam String titulo, Model model) {
+        Documento doc = documentoService.listarDocumentos()
+                .stream()
+                .filter(d -> d.getTitulo().equals(titulo))
+                .findFirst()
+                .orElse(null);
+
+        if (doc != null) {
+            documentoService.agregarDocumentoAVista(doc);
+        }
+        model.addAttribute("documentosEnVista", documentoService.listarDocumentosEnVista());
+        return "documentosEnVista";
+    }
+
+    @PostMapping("/vista/cerrar")
+    public String cerrarDocumentoEnVista(Model model) {
+        Documento cerrado = documentoService.cerrarDocumentoEnVista();
+        model.addAttribute("cerrado", cerrado);
+        model.addAttribute("documentosEnVista", documentoService.listarDocumentosEnVista());
+        return "documentosEnVista";
+    }
+
+    @GetMapping("/area-de-trabajo")
+    public String mostrarAreaDeTrabajo(Model model) {
+        // Documento actual
+        model.addAttribute("documento", documentoService.obtenerDocumento());
+        // Documentos abiertos en el área de trabajo
+        model.addAttribute("documentosEnVista", documentoService.listarDocumentosEnVista());
+        // Cambios pendientes
+        model.addAttribute("cambiosPendientes", documentoService.listarCambiosPendientes());
+        return "areaDeTrabajo";
+    }
+
 }
