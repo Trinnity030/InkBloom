@@ -34,11 +34,16 @@ public class DocumentoController {
     }
 
     @GetMapping("/crear")
-    public String crearDocumento(@RequestParam String titulo, Model model) {
-        documentoService.crearDocumento(titulo); // Crea el documento
-        model.addAttribute("documento", documentoService.obtenerDocumento()); // Agrega el documento al modelo
-        return "documento"; // Devuelve la vista "documento"
+    public String crearDocumento(@RequestParam(required = true) String titulo, Model model) {
+        if (titulo == null || titulo.trim().isEmpty()) {
+            model.addAttribute("error", "El título no puede estar vacío.");
+            return "error"; // Una vista de error adecuada
+        }
+        documentoService.crearDocumento(titulo);
+        model.addAttribute("documento", documentoService.obtenerDocumento());
+        return "documento";
     }
+
 
     @PostMapping("/agregar")
     public String agregarTexto(@RequestParam String texto, Model model) {
@@ -84,18 +89,15 @@ public class DocumentoController {
 
     @PostMapping("/vista/abrir")
     public String abrirDocumentoEnVista(@RequestParam String titulo, Model model) {
-        Documento doc = documentoService.listarDocumentos()
-                .stream()
+        documentoService.listarDocumentos().stream()
                 .filter(d -> d.getTitulo().equals(titulo))
                 .findFirst()
-                .orElse(null);
+                .ifPresent(documentoService::agregarDocumentoAVista);
 
-        if (doc != null) {
-            documentoService.agregarDocumentoAVista(doc);
-        }
         model.addAttribute("documentosEnVista", documentoService.listarDocumentosEnVista());
         return "documentosEnVista";
     }
+
 
     @PostMapping("/vista/cerrar")
     public String cerrarDocumentoEnVista(Model model) {
