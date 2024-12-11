@@ -1,5 +1,6 @@
 package com.example.InkBloom.Controller;
 
+import com.example.InkBloom.Model.AreaDeTrabajo;
 import com.example.InkBloom.Model.Documento;
 import com.example.InkBloom.Model.DocumentoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
 // Controlador que maneja las rutas para interactuar con el documento
-@Controller
-@RequestMapping("/documento")
+@RestController
+@RequestMapping("/api/documento")
 public class DocumentoController {
 
     @Autowired
@@ -22,70 +24,71 @@ public class DocumentoController {
     /**
      * Maneja la solicitud para mostrar la lista de documentos.
      * Se utiliza el metodo GET en la URL "/documentos".
-     *
-     * @param model El objeto Model permite enviar datos al archivo HTML.
-     * @return El nombre del archivo HTML que se renderizará (sin extensión).
      */
+    // Listar documentos
     @GetMapping
-    public String listarDocumentos(Model model) {
-        List<Documento> documentos = documentoService.listarDocumentos();
-        model.addAttribute("documentos", documentos);
-        return "documento";
+    public List<Documento> listarDocumentos() {
+        return documentoService.listarDocumentos();
     }
 
-    @GetMapping("/crear")
-    public String crearDocumento(@RequestParam(required = true) String titulo, Model model) {
+    // Crear un documento
+    @PostMapping("/crear")
+    public Documento crearDocumento(@RequestParam String titulo) {
         if (titulo == null || titulo.trim().isEmpty()) {
-            model.addAttribute("error", "El título no puede estar vacío.");
-            return "error"; // Una vista de error adecuada
+            throw new IllegalArgumentException("El título no puede estar vacío.");
         }
         documentoService.crearDocumento(titulo);
-        model.addAttribute("documento", documentoService.obtenerDocumento());
-        return "documento";
+        return documentoService.obtenerDocumento();
     }
 
 
+    // Agregar texto a un documento
     @PostMapping("/agregar")
-    public String agregarTexto(@RequestParam String texto, Model model) {
+    public Documento agregarTexto(@RequestParam String texto) {
         documentoService.agregarTexto(texto);
-        model.addAttribute("documento", documentoService.obtenerDocumento());
-        return "documento";
+        return documentoService.obtenerDocumento();
     }
+
 
     @PostMapping("/quitar")
-    public String quitarTexto(Model model) {
+    public Documento quitarTexto() {
         documentoService.quitarTexto();
-        model.addAttribute("documento", documentoService.obtenerDocumento());
-        return "documento";
+        return documentoService.obtenerDocumento();
     }
+
 
     @PostMapping("/deshacer")
-    public String deshacer(Model model) {
+    public Documento deshacer() {
         documentoService.deshacer();
-        model.addAttribute("documento", documentoService.obtenerDocumento());
-        return "documento";
+        return documentoService.obtenerDocumento();
     }
+
 
     @PostMapping("/rehacer")
-    public String rehacer(Model model) {
+    public Documento rehacer() {
         documentoService.rehacer();
-        model.addAttribute("documento", documentoService.obtenerDocumento());
-        return "documento";
+        return documentoService.obtenerDocumento();
     }
 
+
+    // Guardar documento
     @PostMapping("/guardar")
-    public String guardarDocumento(Model model) {
+    public List<Documento> guardarDocumento() {
         documentoService.guardarDocumento();
-        model.addAttribute("documentosGuardados", documentoService.listarDocumentos());
-        return "documento";
+        return documentoService.listarDocumentos();
+    }
+
+    // Obtener el documento actual
+    @GetMapping("/actual")
+    public Documento obtenerDocumentoActual() {
+        return documentoService.obtenerDocumento();
     }
 
     @GetMapping("/cambios")
-    public String listarCambiosPendientes(Model model) {
-        Queue<String> cambios = documentoService.listarCambiosPendientes();
-        model.addAttribute("cambios", cambios);
-        return "cambiosPendientes"; // Vista con la lista de cambios
+    public Queue<String> listarCambiosPendientes() {
+        return documentoService.listarCambiosPendientes();
     }
+
 
     @PostMapping("/vista/abrir")
     public String abrirDocumentoEnVista(@RequestParam String titulo, Model model) {
@@ -94,28 +97,29 @@ public class DocumentoController {
                 .findFirst()
                 .ifPresent(documentoService::agregarDocumentoAVista);
 
-        model.addAttribute("documentosEnVista", documentoService.listarDocumentosEnVista());
+        // Convierte la cola a una lista antes de agregarla al modelo
+        List<Documento> documentosEnVista = new ArrayList<>(documentoService.listarDocumentosEnVista());
+        model.addAttribute("documentosEnVista", documentosEnVista);
+
         return "documentosEnVista";
     }
+
 
 
     @PostMapping("/vista/cerrar")
-    public String cerrarDocumentoEnVista(Model model) {
-        Documento cerrado = documentoService.cerrarDocumentoEnVista();
-        model.addAttribute("cerrado", cerrado);
-        model.addAttribute("documentosEnVista", documentoService.listarDocumentosEnVista());
-        return "documentosEnVista";
+    public Documento cerrarDocumentoEnVista() {
+        return documentoService.cerrarDocumentoEnVista();
     }
 
+
     @GetMapping("/area-de-trabajo")
-    public String mostrarAreaDeTrabajo(Model model) {
-        // Documento actual
-        model.addAttribute("documento", documentoService.obtenerDocumento());
-        // Documentos abiertos en el área de trabajo
-        model.addAttribute("documentosEnVista", documentoService.listarDocumentosEnVista());
-        // Cambios pendientes
-        model.addAttribute("cambiosPendientes", documentoService.listarCambiosPendientes());
-        return "areaDeTrabajo";
+    public AreaDeTrabajo mostrarAreaDeTrabajo() {
+        return new AreaDeTrabajo(
+                documentoService.obtenerDocumento(),
+                new ArrayList<>(documentoService.listarDocumentosEnVista()), // Convertir a List
+                documentoService.listarCambiosPendientes()
+        );
     }
+
 
 }
